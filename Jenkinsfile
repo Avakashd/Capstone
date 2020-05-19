@@ -12,8 +12,6 @@ pipeline {
 			steps {
 				withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]){
 					sh '''
-						echo ${DOCKER_USERNAME}
-						echo ${DOCKER_PASSWORD}
 						docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 						docker build -t avakashd/capstone .
 					'''
@@ -34,7 +32,7 @@ pipeline {
 
 		stage('Set current kubectl context') {
 			steps {
-				withAWS(region:'us-east-1', credentials:'Capstone') {
+				withAWS(region:'us-west-2', credentials:'Capstone') {
 					sh '''
 						kubectl config use-context arn:aws:eks:us-west-2:448938845398:cluster/capstonecluster
 					'''
@@ -44,7 +42,7 @@ pipeline {
 
 		stage('Deploy blue container') {
 			steps {
-				withAWS(region:'us-east-1', credentials:'Capstone') {
+				withAWS(region:'us-west-2', credentials:'Capstone') {
 					sh '''
 						kubectl apply -f ./blue-controller.json
 					'''
